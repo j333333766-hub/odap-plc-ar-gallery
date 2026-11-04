@@ -13,6 +13,8 @@
   /* 위쪽 한 줄: 왼쪽 제목·안내, 오른쪽 가로형 QR 카드 */
   .top { display: flex; gap: 16px; align-items: center; justify-content: space-between; margin-bottom: 14px; }
   .intro { min-width: 0; flex: 1 1 auto; }
+  .back { display: inline-flex; align-items: center; gap: 4px; margin-bottom: 8px; padding: 5px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); color: var(--ink); font-size: 14px; font-weight: 600; text-decoration: none; }
+  .back:hover { border-color: var(--accent); color: var(--accent); }
   h1 { font-size: 22px; margin: 0 0 4px; }
   h1 .count { font-size: 14px; font-weight: 500; color: var(--mute); margin-left: 6px; }
   .sub { color: var(--mute); margin: 0; font-size: 14px; line-height: 1.55; }
@@ -46,6 +48,7 @@
 <main>
   <div class="top">
     <div class="intro">
+      <a class="back" href="https://j333333766-hub.github.io/odap-case-1105/#p5">← 사례 발표 사이트로</a>
       <h1>회전체 작품 AR 갤러리 <small style="font-size:.6em;font-weight:700;color:var(--mute)">수학교사 전문적학습공동체 · 2026. 11. 5.</small><span class="count" id="count"></span></h1>
       <p class="sub">오늘 선생님들이 만든 회전체와, 구월중 1학년 6~10반 학생들이 「오답의 재발견」 수업에서 만든 작품을 함께 모았어요. 이름을 누르면 3D로 돌려 볼 수 있고, 스마트폰에서는 <b>AR로 보기</b>로 내 책상 위에 올려 볼 수 있어요. 안드로이드는 Chrome, 아이폰·아이패드는 Safari에서 열어요.</p>
     </div>
