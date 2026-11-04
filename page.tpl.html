@@ -4,18 +4,23 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>회전체 작품 AR 갤러리 · 수학 전학공</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
-  :root { --bg: #f3f6fb; --card: #fff; --ink: #1d2733; --mute: #5b6878; --line: #d6dfeb; --accent: #d9468a; --pic1: #ffffff; --pic2: #e6ecf5; }
-  @media (prefers-color-scheme: dark) { :root { --bg: #14181f; --card: #1d232d; --ink: #e6ecf3; --mute: #9aa7b6; --line: #2e3744; --accent: #f07ab0; --pic1: #3a4252; --pic2: #232a35; } }
+  /* 11/5 학교 학습 사이트(오답의 재발견)와 같은 색·서체 */
+  @font-face { font-family: "Jalnan Gothic"; src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_231029@1.1/JalnanGothic.woff") format("woff"); font-weight: 400; font-display: swap; }
+  :root { --bg: #F7F8FA; --card: #fff; --ink: #1B1F2A; --mute: #8A8F9C; --line: #E6E8EE; --accent: #D9584F; --pic1: #ffffff; --pic2: #EAF6F2; --brand: #7DCBB5; --brand-deep: #4FAE97; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #14181f; --card: #1d232d; --ink: #e6ecf3; --mute: #9aa7b6; --line: #2e3744; --accent: #E9786F; --brand: #4FAE97; --brand-deep: #7DCBB5; --pic1: #3a4252; --pic2: #232a35; } }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", "Malgun Gothic", sans-serif; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Pretendard Variable", Pretendard, -apple-system, "Noto Sans KR", "Malgun Gothic", sans-serif; word-break: keep-all; }
+  h1 { font-family: "Jalnan Gothic", "Pretendard Variable", sans-serif; font-weight: 400; letter-spacing: -.01em; }
+  .back:hover { border-color: var(--brand) !important; color: var(--brand-deep) !important; }
   main { max-width: 960px; margin: 0 auto; padding: 20px 16px 40px; }
   /* 위쪽 한 줄: 왼쪽 제목·안내, 오른쪽 가로형 QR 카드 */
   .top { display: flex; gap: 16px; align-items: center; justify-content: space-between; margin-bottom: 14px; }
   .intro { min-width: 0; flex: 1 1 auto; }
   .back { display: inline-flex; align-items: center; gap: 4px; margin-bottom: 8px; padding: 5px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); color: var(--ink); font-size: 14px; font-weight: 600; text-decoration: none; }
   .back:hover { border-color: var(--accent); color: var(--accent); }
-  h1 { font-size: 22px; margin: 0 0 4px; }
+  h1 { font-size: 24px; margin: 0 0 4px; }
   h1 .count { font-size: 14px; font-weight: 500; color: var(--mute); margin-left: 6px; }
   .sub { color: var(--mute); margin: 0; font-size: 14px; line-height: 1.55; }
   .qr { flex: none; margin: 0; display: flex; align-items: center; gap: 10px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px 8px 8px; }
