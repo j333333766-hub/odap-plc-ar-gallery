@@ -13,6 +13,8 @@
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Pretendard Variable", Pretendard, -apple-system, "Noto Sans KR", "Malgun Gothic", sans-serif; word-break: keep-all; }
   h1 { font-family: "Jalnan Gothic", "Pretendard Variable", sans-serif; font-weight: 400; letter-spacing: -.01em; }
+  h1 small { font-family: "Pretendard Variable", Pretendard, sans-serif; letter-spacing: 0; }
+  @media (max-width: 640px) { h1 small { display: block; margin-top: 4px; font-size: 13px !important; } }
   .back:hover { border-color: var(--brand) !important; color: var(--brand-deep) !important; }
   main { max-width: 960px; margin: 0 auto; padding: 20px 16px 40px; }
   /* 위쪽 한 줄: 왼쪽 제목·안내, 오른쪽 가로형 QR 카드 */
