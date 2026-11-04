@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>회전체 작품 AR 갤러리 · 수학 전학공</title>
+<style>
+  :root { --bg: #f3f6fb; --card: #fff; --ink: #1d2733; --mute: #5b6878; --line: #d6dfeb; --accent: #d9468a; --pic1: #ffffff; --pic2: #e6ecf5; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #14181f; --card: #1d232d; --ink: #e6ecf3; --mute: #9aa7b6; --line: #2e3744; --accent: #f07ab0; --pic1: #3a4252; --pic2: #232a35; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", "Malgun Gothic", sans-serif; }
+  main { max-width: 960px; margin: 0 auto; padding: 20px 16px 40px; }
+  /* 위쪽 한 줄: 왼쪽 제목·안내, 오른쪽 가로형 QR 카드 */
+  .top { display: flex; gap: 16px; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .intro { min-width: 0; flex: 1 1 auto; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  h1 .count { font-size: 14px; font-weight: 500; color: var(--mute); margin-left: 6px; }
+  .sub { color: var(--mute); margin: 0; font-size: 14px; line-height: 1.55; }
+  .qr { flex: none; margin: 0; display: flex; align-items: center; gap: 10px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px 8px 8px; }
+  .qr-img { width: 92px; background: #fff; border-radius: 6px; padding: 2px; }
+  .qr-img svg { display: block; width: 100%; height: auto; }
+  .qr figcaption { font-size: 12.5px; color: var(--mute); line-height: 1.45; max-width: 130px; }
+  .qr figcaption b { display: block; color: var(--ink); font-size: 14px; }
+  /* 휴대폰으로 이미 들어왔으면 QR 은 필요 없음 → 좁은 화면에서는 숨김 */
+  @media (max-width: 640px) { .qr { display: none; } }
+  /* 작품 카드: 위에 미리보기 사진(정사각형), 아래에 이름 */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .grid a { display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; color: var(--ink); text-decoration: none; }
+  .grid a:hover, .grid a:focus-visible { border-color: var(--accent); outline: none; box-shadow: 0 0 0 2px var(--accent); }
+  .grid .pic { aspect-ratio: 1; max-width: 100%; background: radial-gradient(circle at 50% 40%, var(--pic1), var(--pic2)); display: grid; place-items: center; }
+  .grid .pic img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .grid .pic .none { font-size: 34px; color: var(--mute); }
+  .grid .nm { padding: 8px 12px 10px; font-size: 15.5px; font-weight: 600; word-break: keep-all; overflow-wrap: anywhere; }
+  .grid .nm small { display: block; font-weight: 400; font-size: 12px; color: var(--mute); }
+  .empty { color: var(--mute); padding: 24px 0; }
+  /* 반 고르기 칩: 주소 끝 #1-7 로도 열림 */
+  .grid a[hidden], .chips[hidden] { display: none; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; }
+  .chips button { font: inherit; font-size: 14.5px; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
+  .chips button small { color: var(--mute); margin-left: 4px; font-size: 12px; }
+  .chips button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .chips button[aria-pressed="true"] small { color: #fff; }
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <div class="intro">
+      <h1>회전체 작품 AR 갤러리 <small style="font-size:.6em;font-weight:700;color:var(--mute)">수학교사 전문적학습공동체 · 2026. 11. 5.</small><span class="count" id="count"></span></h1>
+      <p class="sub">오늘 선생님들이 만든 회전체와, 구월중 1학년 6~10반 학생들이 「오답의 재발견」 수업에서 만든 작품을 함께 모았어요. 이름을 누르면 3D로 돌려 볼 수 있고, 스마트폰에서는 <b>AR로 보기</b>로 내 책상 위에 올려 볼 수 있어요. 안드로이드는 Chrome, 아이폰·아이패드는 Safari에서 열어요.</p>
+    </div>
+    <figure class="qr">
+      <div class="qr-img">__QR__</div>
+      <figcaption><b>스마트폰으로 열기</b>카메라로 QR을 찍어요</figcaption>
+    </figure>
+  </div>
+  <div class="chips" id="chips" role="group" aria-label="반 고르기"></div>
+  <div class="grid" id="grid"></div>
+</main>
+<script>
+const ITEMS = __ITEMS__;
+const grid = document.getElementById('grid');
+// 학번 5자리(학년 1 + 반 2 + 번호 2)에서 반을 뽑는다. 학번이 아닌 이름은 '기타'
+// 11/5 전학공: '전학공 선생님' + 학생 반별(c106~c110) 묶음(build.py 가 g 를 넣는다)
+const GROUP = { plc: '전학공 선생님', c106: '1학년 6반', c107: '1학년 7반', c108: '1학년 8반', c109: '1학년 9반', c110: '1학년 10반' };
+const BY = Object.fromEntries(ITEMS.map((i) => [i.dir, i.g]));
+const klass = (dir) => BY[dir] || 'c107';
+const label = (k) => k === '전체' ? k : GROUP[k] || k;
+for (const i of ITEMS) {
+  const a = document.createElement('a');
+  a.href = 'works/' + encodeURIComponent(i.dir) + '/';
+  const pic = document.createElement('div'); pic.className = 'pic';
+  if (i.thumb) {
+    const im = document.createElement('img');
+    im.src = 'works/' + encodeURIComponent(i.dir) + '/thumb.webp'; im.alt = i.name + ' 미리보기'; im.loading = 'lazy';
+    pic.append(im);
+  } else pic.innerHTML = '<span class="none">◎</span>';
+  const t = document.createElement('div'); t.className = 'nm'; t.textContent = i.name;
+  const s = document.createElement('small'); s.textContent = i.mb + 'MB'; t.append(s);
+  a.dataset.k = klass(i.dir);
+  a.append(pic, t); grid.append(a);
+}
+if (!ITEMS.length) grid.innerHTML = '<p class="empty">아직 올라온 작품이 없어요.</p>';
+const counts = {};
+for (const i of ITEMS) counts[klass(i.dir)] = (counts[klass(i.dir)] || 0) + 1;
+const keys = Object.keys(GROUP).filter((k) => counts[k]);
+const chips = document.getElementById('chips');
+if (!counts.plc) { const p = document.createElement('p'); p.className = 'empty'; p.textContent = '오늘 선생님들의 작품은 올라오는 대로 여기에 보여요(몇 분 걸려요). 지금은 학생 작품만 있어요.'; grid.before(p); }
+const show = (k) => {
+  if (k !== '전체' && !counts[k]) k = '전체';
+  for (const a of grid.querySelectorAll('a')) a.hidden = k !== '전체' && a.dataset.k !== k;
+  for (const b of chips.children) b.setAttribute('aria-pressed', String(b.dataset.k === k));
+  document.getElementById('count').textContent = (k === '전체' ? ITEMS.length : counts[k]) + '개';
+};
+for (const k of ['전체', ...keys]) {
+  const b = document.createElement('button'); b.type = 'button'; b.dataset.k = k;
+  b.textContent = label(k);
+  const n = document.createElement('small'); n.textContent = k === '전체' ? ITEMS.length : counts[k]; b.append(n);
+  b.onclick = () => { history.replaceState(null, '', k === '전체' ? location.pathname : '#' + k); show(k); };
+  chips.append(b);
+}
+show(decodeURIComponent(location.hash.slice(1)) || '전체');
+</script>
+</body>
+</html>

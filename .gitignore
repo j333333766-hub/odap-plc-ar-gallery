@@ -1,0 +1,7 @@
+__pycache__/
+*.zip
+desktop.ini
+_thumbcache/
+_before.json
+update.log
+.update.lock

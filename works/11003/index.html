@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>11003 김*온 · AR로 보기</title>
+
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+
+  <style>
+    :root { color-scheme: light dark; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+      background: radial-gradient(circle at 50% 30%, #2a2a35 0%, #15151c 70%);
+      color: #f0f0f5;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
+    header { padding: 14px 18px; text-align: center; font-size: 15px; font-weight: 600; letter-spacing: .3px; flex: 0 0 auto; }
+    .stage { flex: 1 1 auto; position: relative; }
+    model-viewer { width: 100%; height: 100%; --poster-color: transparent; background: transparent; }
+
+    /* AR 버튼 */
+    .ar-button {
+      position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
+      background: #ffffff; color: #15151c; border: none; border-radius: 999px;
+      padding: 13px 26px; font-size: 15px; font-weight: 700; box-shadow: 0 6px 20px rgba(0,0,0,.35);
+      cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .ar-button:active { transform: translateX(-50%) scale(.97); }
+    .ar-button svg { width: 18px; height: 18px; }
+    /* AR 미지원 기기에서도 버튼을 항상 표시 (model-viewer 기본 숨김 무시) */
+    button[slot="ar-button"] { display: inline-flex !important; }
+
+    /* 로딩 표시 */
+    .progress-bar {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 180px; height: 5px; background: rgba(255,255,255,.15); border-radius: 4px; overflow: hidden;
+    }
+    .progress-bar .fill { height: 100%; width: 0%; background: #fff; transition: width .2s; }
+    .progress-bar[hidden] { display: none; }
+
+    .hint { flex: 0 0 auto; text-align: center; font-size: 12px; color: #9a9aa8; padding: 8px 18px 14px; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <header style="position:relative"><a href="../../" style="position:absolute;top:50%;transform:translateY(-50%);color:inherit;font:inherit;font-size:14px;font-weight:600;text-decoration:none;opacity:.85;left:14px">← 작품 목록</a>11003 김*온<button type="button" style="position:absolute;top:50%;transform:translateY(-50%);color:inherit;font:inherit;font-size:14px;font-weight:600;text-decoration:none;opacity:.85;right:14px;background:none;border:0;cursor:pointer;padding:0" onclick="document.getElementById('wb-qr').hidden=false">📱 휴대폰으로</button></header><div id="wb-qr" hidden onclick="this.hidden=true" style="position:fixed;inset:0;z-index:10;background:rgba(0,0,0,.6);display:grid;place-items:center;cursor:pointer"><div style="background:#fff;color:#15151c;border-radius:16px;padding:18px;text-align:center;width:min(300px,86vw)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 41 41" class="segno"><path fill="#fff" d="M0 0h41v41h-41z"/><path class="qrline" stroke="#000" d="M2 2.5h7m2 0h2m1 0h2m2 0h2m12 0h7m-37 1h1m5 0h1m3 0h2m1 0h5m2 0h2m1 0h6m1 0h1m5 0h1m-37 1h1m1 0h3m1 0h1m1 0h2m1 0h1m1 0h1m1 0h1m5 0h3m2 0h1m3 0h1m1 0h3m1 0h1m-37 1h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m1 0h1m1 0h1m4 0h4m1 0h2m1 0h1m1 0h3m1 0h1m-37 1h1m1 0h3m1 0h1m1 0h4m1 0h2m2 0h7m1 0h2m3 0h1m1 0h3m1 0h1m-37 1h1m5 0h1m1 0h1m2 0h2m1 0h4m2 0h2m3 0h4m1 0h1m5 0h1m-37 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-29 1h1m1 0h1m3 0h1m1 0h8m2 0h1m-27 1h1m1 0h5m4 0h2m1 0h1m1 0h1m2 0h1m1 0h1m2 0h2m1 0h2m1 0h5m-30 1h1m2 0h1m1 0h1m3 0h2m2 0h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m2 0h2m-36 1h1m1 0h1m3 0h3m1 0h1m2 0h4m2 0h1m1 0h2m1 0h5m3 0h1m2 0h2m-33 1h2m2 0h3m1 0h4m2 0h4m2 0h1m11 0h1m-36 1h1m1 0h1m2 0h5m3 0h2m1 0h1m1 0h1m2 0h1m1 0h2m2 0h1m1 0h1m1 0h5m-36 1h2m1 0h1m2 0h1m5 0h2m3 0h2m3 0h1m2 0h1m2 0h1m1 0h1m-32 1h2m1 0h1m1 0h2m1 0h2m2 0h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h1m2 0h2m2 0h3m2 0h1m-37 1h3m5 0h2m1 0h2m6 0h2m2 0h1m2 0h1m2 0h4m-33 1h2m4 0h2m1 0h1m1 0h1m1 0h3m2 0h8m1 0h1m2 0h3m1 0h1m1 0h1m-37 1h1m10 0h2m1 0h3m7 0h1m1 0h1m1 0h1m2 0h1m3 0h1m-36 1h3m2 0h2m1 0h1m1 0h2m2 0h1m3 0h1m1 0h2m3 0h3m2 0h2m2 0h3m-37 1h1m2 0h3m2 0h1m1 0h3m1 0h1m1 0h1m4 0h1m1 0h1m5 0h1m1 0h1m4 0h1m-36 1h1m1 0h6m4 0h2m2 0h1m4 0h4m1 0h2m1 0h1m1 0h3m-28 1h1m2 0h2m2 0h1m1 0h2m1 0h6m4 0h1m3 0h1m1 0h1m-34 1h2m2 0h2m5 0h3m1 0h1m2 0h2m2 0h1m2 0h3m1 0h3m1 0h2m-35 1h2m1 0h1m1 0h4m4 0h4m2 0h4m1 0h1m2 0h1m1 0h2m2 0h2m-37 1h1m1 0h1m1 0h4m2 0h1m3 0h1m1 0h1m2 0h1m1 0h1m2 0h2m1 0h4m1 0h1m1 0h1m1 0h1m-37 1h2m1 0h1m1 0h1m1 0h1m6 0h2m2 0h1m1 0h7m1 0h2m1 0h1m1 0h1m-34 1h1m1 0h1m1 0h1m1 0h4m3 0h1m1 0h2m1 0h2m1 0h2m3 0h3m1 0h1m4 0h2m-37 1h1m3 0h2m2 0h2m3 0h3m2 0h7m1 0h1m1 0h2m1 0h2m2 0h2m-37 1h1m4 0h2m1 0h1m1 0h1m1 0h1m1 0h2m1 0h3m2 0h1m1 0h3m1 0h7m1 0h1m-29 1h3m1 0h1m3 0h1m1 0h3m2 0h1m4 0h1m3 0h2m-34 1h7m2 0h1m2 0h1m2 0h1m2 0h1m3 0h1m5 0h1m1 0h1m1 0h1m1 0h3m-37 1h1m5 0h1m1 0h1m2 0h1m1 0h3m3 0h2m6 0h2m3 0h2m1 0h2m-37 1h1m1 0h3m1 0h1m1 0h2m1 0h2m2 0h1m2 0h5m2 0h1m1 0h6m1 0h2m-36 1h1m1 0h3m1 0h1m1 0h3m2 0h5m3 0h1m1 0h4m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m-37 1h1m1 0h3m1 0h1m1 0h2m10 0h1m3 0h1m2 0h1m1 0h1m3 0h1m1 0h2m-37 1h1m5 0h1m2 0h6m1 0h1m4 0h1m2 0h1m2 0h4m1 0h1m3 0h1m-37 1h7m1 0h1m2 0h1m1 0h1m2 0h2m7 0h2m2 0h1m2 0h5"/></svg>
+<p style="margin:10px 0 0;font-size:14px;line-height:1.5">스마트폰 카메라로 찍으면<br><b>11003 김*온</b> 작품이 열려요.<br><span style="color:#667">아무 곳이나 누르면 닫혀요</span></p></div></div><style>#wb-qr[hidden]{display:none!important}</style>
+
+  <div class="stage">
+    <model-viewer
+      id="viewer"
+      src="model.glb"
+      alt="11003 김*온"
+      camera-controls
+      touch-action="pan-y"
+      auto-rotate
+      auto-rotate-delay="0"
+      shadow-intensity="1"
+      exposure="1"
+      environment-image="neutral"
+      ar
+      ar-modes="scene-viewer quick-look"
+      ar-scale="auto"
+      ar-placement="floor"
+      ios-src="model.usdz">
+
+      <button class="ar-button" slot="ar-button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2 3 7v10l9 5 9-5V7z"/>
+          <path d="M3 7l9 5 9-5"/>
+          <path d="M12 22V12"/>
+        </svg>
+        AR로 보기
+      </button>
+
+      <div class="progress-bar" slot="progress-bar">
+        <div class="fill"></div>
+      </div>
+    </model-viewer>
+  </div>
+
+  <div class="hint">
+    드래그(또는 손가락)로 회전 · 두 손가락으로 확대/축소<br />
+    <b>AR로 보기</b>를 누르면 카메라가 켜지고 현실 공간에 모델이 나타납니다.
+  </div>
+
+  <script>
+    const mv = document.getElementById('viewer');
+    const bar = mv.querySelector('.progress-bar');
+    const fill = mv.querySelector('.progress-bar .fill');
+
+    mv.addEventListener('progress', (e) => {
+      const p = e.detail.totalProgress;
+      fill.style.width = (p * 100) + '%';
+      bar.toggleAttribute('hidden', p === 1);
+    });
+
+    // AR 미지원 기기 안내
+    mv.addEventListener('load', () => {
+      if (!mv.canActivateAR) {
+        const btn = mv.querySelector('.ar-button');
+        if (btn) {
+          btn.addEventListener('click', () => {
+            alert('이 기기/브라우저에서는 AR을 지원하지 않습니다.\n안드로이드는 Chrome, 아이폰은 Safari에서 열어주세요.');
+          });
+        }
+      }
+    });
+  </script>
+</body>
+</html>

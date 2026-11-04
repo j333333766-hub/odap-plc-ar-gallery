@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>회전체 작품 AR 갤러리 · 수학 전학공</title>
+<style>
+  :root { --bg: #f3f6fb; --card: #fff; --ink: #1d2733; --mute: #5b6878; --line: #d6dfeb; --accent: #d9468a; --pic1: #ffffff; --pic2: #e6ecf5; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #14181f; --card: #1d232d; --ink: #e6ecf3; --mute: #9aa7b6; --line: #2e3744; --accent: #f07ab0; --pic1: #3a4252; --pic2: #232a35; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", "Malgun Gothic", sans-serif; }
+  main { max-width: 960px; margin: 0 auto; padding: 20px 16px 40px; }
+  /* 위쪽 한 줄: 왼쪽 제목·안내, 오른쪽 가로형 QR 카드 */
+  .top { display: flex; gap: 16px; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .intro { min-width: 0; flex: 1 1 auto; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  h1 .count { font-size: 14px; font-weight: 500; color: var(--mute); margin-left: 6px; }
+  .sub { color: var(--mute); margin: 0; font-size: 14px; line-height: 1.55; }
+  .qr { flex: none; margin: 0; display: flex; align-items: center; gap: 10px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px 8px 8px; }
+  .qr-img { width: 92px; background: #fff; border-radius: 6px; padding: 2px; }
+  .qr-img svg { display: block; width: 100%; height: auto; }
+  .qr figcaption { font-size: 12.5px; color: var(--mute); line-height: 1.45; max-width: 130px; }
+  .qr figcaption b { display: block; color: var(--ink); font-size: 14px; }
+  /* 휴대폰으로 이미 들어왔으면 QR 은 필요 없음 → 좁은 화면에서는 숨김 */
+  @media (max-width: 640px) { .qr { display: none; } }
+  /* 작품 카드: 위에 미리보기 사진(정사각형), 아래에 이름 */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .grid a { display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; color: var(--ink); text-decoration: none; }
+  .grid a:hover, .grid a:focus-visible { border-color: var(--accent); outline: none; box-shadow: 0 0 0 2px var(--accent); }
+  .grid .pic { aspect-ratio: 1; max-width: 100%; background: radial-gradient(circle at 50% 40%, var(--pic1), var(--pic2)); display: grid; place-items: center; }
+  .grid .pic img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .grid .pic .none { font-size: 34px; color: var(--mute); }
+  .grid .nm { padding: 8px 12px 10px; font-size: 15.5px; font-weight: 600; word-break: keep-all; overflow-wrap: anywhere; }
+  .grid .nm small { display: block; font-weight: 400; font-size: 12px; color: var(--mute); }
+  .empty { color: var(--mute); padding: 24px 0; }
+  /* 반 고르기 칩: 주소 끝 #1-7 로도 열림 */
+  .grid a[hidden], .chips[hidden] { display: none; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; }
+  .chips button { font: inherit; font-size: 14.5px; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
+  .chips button small { color: var(--mute); margin-left: 4px; font-size: 12px; }
+  .chips button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .chips button[aria-pressed="true"] small { color: #fff; }
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <div class="intro">
+      <h1>회전체 작품 AR 갤러리 <small style="font-size:.6em;font-weight:700;color:var(--mute)">수학교사 전문적학습공동체 · 2026. 11. 5.</small><span class="count" id="count"></span></h1>
+      <p class="sub">오늘 선생님들이 만든 회전체와, 구월중 1학년 6~10반 학생들이 「오답의 재발견」 수업에서 만든 작품을 함께 모았어요. 이름을 누르면 3D로 돌려 볼 수 있고, 스마트폰에서는 <b>AR로 보기</b>로 내 책상 위에 올려 볼 수 있어요. 안드로이드는 Chrome, 아이폰·아이패드는 Safari에서 열어요.</p>
+    </div>
+    <figure class="qr">
+      <div class="qr-img"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 37 37" class="segno"><path fill="#fff" d="M0 0h37v37h-37z"/><path class="qrline" stroke="#000" d="M2 2.5h7m1 0h1m2 0h1m1 0h1m3 0h4m1 0h3m1 0h7m-33 1h1m5 0h1m1 0h2m1 0h1m1 0h1m4 0h1m3 0h3m1 0h1m5 0h1m-33 1h1m1 0h3m1 0h1m2 0h2m1 0h1m2 0h2m1 0h3m2 0h1m2 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h4m2 0h3m1 0h1m3 0h1m1 0h1m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m2 0h2m2 0h2m2 0h1m1 0h2m5 0h1m1 0h3m1 0h1m-33 1h1m5 0h1m4 0h1m2 0h1m2 0h1m1 0h4m3 0h1m5 0h1m-33 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-25 1h1m3 0h1m1 0h1m2 0h1m2 0h1m1 0h1m-23 1h1m1 0h2m1 0h3m1 0h1m4 0h1m1 0h2m2 0h3m1 0h1m1 0h1m2 0h1m1 0h2m-28 1h1m4 0h1m1 0h1m3 0h1m1 0h7m1 0h2m1 0h2m1 0h1m-33 1h1m1 0h1m2 0h2m2 0h4m1 0h1m1 0h2m2 0h5m1 0h4m1 0h2m-33 1h2m2 0h1m4 0h2m1 0h3m4 0h1m3 0h1m1 0h1m1 0h1m1 0h1m2 0h1m-32 1h1m1 0h4m3 0h1m1 0h1m2 0h1m2 0h3m1 0h1m2 0h1m2 0h2m1 0h2m-33 1h1m6 0h2m1 0h1m5 0h1m2 0h1m4 0h1m2 0h1m2 0h2m-30 1h2m1 0h3m2 0h1m1 0h1m1 0h6m1 0h2m1 0h1m1 0h5m-30 1h1m1 0h1m1 0h1m3 0h5m2 0h1m1 0h2m1 0h2m1 0h3m1 0h3m-31 1h1m1 0h1m1 0h1m1 0h5m1 0h2m1 0h2m1 0h1m1 0h2m1 0h4m1 0h3m-31 1h2m3 0h1m1 0h1m3 0h5m1 0h1m2 0h1m2 0h1m1 0h2m1 0h2m1 0h2m-31 1h1m3 0h1m1 0h1m2 0h2m2 0h1m1 0h1m2 0h2m3 0h4m1 0h1m-31 1h1m6 0h1m2 0h2m2 0h1m7 0h1m3 0h1m1 0h1m2 0h1m-28 1h4m3 0h5m2 0h1m1 0h2m7 0h2m1 0h1m-33 1h1m4 0h1m6 0h1m2 0h1m2 0h4m1 0h1m2 0h2m1 0h2m1 0h1m-31 1h1m1 0h1m1 0h1m2 0h2m3 0h1m1 0h1m1 0h1m2 0h4m4 0h1m1 0h2m-32 1h1m1 0h2m6 0h1m2 0h1m1 0h1m1 0h3m3 0h3m1 0h2m-30 1h1m5 0h1m3 0h1m3 0h2m1 0h1m5 0h6m2 0h1m-24 1h1m2 0h1m2 0h4m1 0h4m1 0h1m3 0h2m-30 1h7m1 0h1m1 0h1m1 0h1m3 0h1m2 0h1m3 0h2m1 0h1m1 0h1m-29 1h1m5 0h1m1 0h1m3 0h1m1 0h3m2 0h3m2 0h1m3 0h4m-32 1h1m1 0h3m1 0h1m2 0h1m2 0h1m4 0h1m2 0h9m1 0h1m-31 1h1m1 0h3m1 0h1m1 0h3m1 0h2m3 0h2m1 0h1m1 0h4m1 0h1m4 0h1m-33 1h1m1 0h3m1 0h1m1 0h1m1 0h1m2 0h1m4 0h1m3 0h1m1 0h4m1 0h2m-31 1h1m5 0h1m3 0h2m1 0h1m1 0h4m4 0h2m1 0h3m3 0h1m-33 1h7m1 0h4m2 0h2m1 0h2m1 0h3m3 0h1m1 0h3"/></svg>
+</div>
+      <figcaption><b>스마트폰으로 열기</b>카메라로 QR을 찍어요</figcaption>
+    </figure>
+  </div>
+  <div class="chips" id="chips" role="group" aria-label="반 고르기"></div>
+  <div class="grid" id="grid"></div>
+</main>
+<script>
+const ITEMS = [{"name": "10602 강*문", "dir": "10602", "mb": 0.4, "g": "c106", "thumb": true}, {"name": "10604 김*솔", "dir": "10604", "mb": 0.2, "g": "c106", "thumb": true}, {"name": "10607 김*민", "dir": "10607", "mb": 0.4, "g": "c106", "thumb": true}, {"name": "10608 김*우", "dir": "10608", "mb": 1.3, "g": "c106", "thumb": true}, {"name": "10610 김*길", "dir": "10610", "mb": 0.8, "g": "c106", "thumb": true}, {"name": "10611 민*우", "dir": "10611", "mb": 0.5, "g": "c106", "thumb": true}, {"name": "10613 박*원", "dir": "10613", "mb": 0.7, "g": "c106", "thumb": true}, {"name": "10614 박*수", "dir": "10614", "mb": 0.4, "g": "c106", "thumb": true}, {"name": "10616 송*혁", "dir": "10616", "mb": 1.7, "g": "c106", "thumb": true}, {"name": "10617 신*석", "dir": "10617", "mb": 3.3, "g": "c106", "thumb": true}, {"name": "10618 여*률", "dir": "10618", "mb": 0.2, "g": "c106", "thumb": true}, {"name": "10619 윤*윤", "dir": "10619", "mb": 0.2, "g": "c106", "thumb": true}, {"name": "10621 이*훈", "dir": "10621", "mb": 0.4, "g": "c106", "thumb": true}, {"name": "10622 이*혁", "dir": "10622", "mb": 0.7, "g": "c106", "thumb": true}, {"name": "10623 이*윤", "dir": "10623", "mb": 1.4, "g": "c106", "thumb": true}, {"name": "10624 이*호", "dir": "10624", "mb": 0.5, "g": "c106", "thumb": true}, {"name": "10625 장*빈", "dir": "10625", "mb": 0.3, "g": "c106", "thumb": true}, {"name": "10626", "dir": "10626", "mb": 0.6, "g": "c106", "thumb": true}, {"name": "10627 정*수", "dir": "10627", "mb": 0.2, "g": "c106", "thumb": true}, {"name": "10628 주*율", "dir": "10628", "mb": 1.4, "g": "c106", "thumb": true}, {"name": "10629 하*준", "dir": "10629", "mb": 0.4, "g": "c106", "thumb": true}, {"name": "10630 황*하", "dir": "10630", "mb": 0.3, "g": "c106", "thumb": true}, {"name": "10633 조*현", "dir": "10633", "mb": 0.6, "g": "c106", "thumb": true}, {"name": "10701 강*환", "dir": "10701", "mb": 1.1, "g": "c107", "thumb": true}, {"name": "10702 강*준", "dir": "10702", "mb": 1.5, "g": "c107", "thumb": true}, {"name": "10703 권*준", "dir": "10703", "mb": 0.3, "g": "c107", "thumb": true}, {"name": "10706 김*호", "dir": "10706", "mb": 0.4, "g": "c107", "thumb": true}, {"name": "10707 김*후", "dir": "10707", "mb": 0.6, "g": "c107", "thumb": true}, {"name": "10709 김*민", "dir": "10709", "mb": 0.3, "g": "c107", "thumb": true}, {"name": "10711 알*오", "dir": "10711", "mb": 0.8, "g": "c107", "thumb": true}, {"name": "10714 박*서", "dir": "10714", "mb": 0.5, "g": "c107", "thumb": true}, {"name": "10715 서*규", "dir": "10715", "mb": 1.1, "g": "c107", "thumb": true}, {"name": "10716 신*호", "dir": "10716", "mb": 0.3, "g": "c107", "thumb": true}, {"name": "10717 심*우", "dir": "10717", "mb": 0.5, "g": "c107", "thumb": true}, {"name": "10719 유*온", "dir": "10719", "mb": 0.3, "g": "c107", "thumb": true}, {"name": "10720 윤*준", "dir": "10720", "mb": 0.8, "g": "c107", "thumb": true}, {"name": "10720 윤*준", "dir": "10720_2", "mb": 0.8, "g": "c107", "thumb": true}, {"name": "10721 이*헌", "dir": "10721", "mb": 0.5, "g": "c107", "thumb": true}, {"name": "10722 이*준", "dir": "10722", "mb": 1.2, "g": "c107", "thumb": true}, {"name": "10723 이*건", "dir": "10723", "mb": 2.7, "g": "c107", "thumb": true}, {"name": "10725 장*우", "dir": "10725", "mb": 0.3, "g": "c107", "thumb": true}, {"name": "10726 전*우", "dir": "10726", "mb": 0.3, "g": "c107", "thumb": true}, {"name": "10727 조*현", "dir": "10727", "mb": 0.2, "g": "c107", "thumb": true}, {"name": "10728 주*욱", "dir": "10728", "mb": 0.4, "g": "c107", "thumb": true}, {"name": "10729 하*원", "dir": "10729", "mb": 0.5, "g": "c107", "thumb": true}, {"name": "10730 황*라", "dir": "10730", "mb": 0.1, "g": "c107", "thumb": true}, {"name": "10731 지*준", "dir": "10731", "mb": 0.3, "g": "c107", "thumb": true}, {"name": "10733 조*현", "dir": "10733", "mb": 0.5, "g": "c107", "thumb": true}, {"name": "10801 강*훈", "dir": "10801", "mb": 0.3, "g": "c108", "thumb": true}, {"name": "10803 권*랑", "dir": "10803", "mb": 0.4, "g": "c108", "thumb": true}, {"name": "10807 김*우", "dir": "10807", "mb": 0.3, "g": "c108", "thumb": true}, {"name": "10808 김*윤", "dir": "10808", "mb": 1.0, "g": "c108", "thumb": true}, {"name": "10809 김*우", "dir": "10809", "mb": 0.5, "g": "c108", "thumb": true}, {"name": "10812 민*", "dir": "10812", "mb": 0.3, "g": "c108", "thumb": true}, {"name": "10814 박*원", "dir": "10814", "mb": 0.3, "g": "c108", "thumb": true}, {"name": "10817 안*재", "dir": "10817", "mb": 0.7, "g": "c108", "thumb": true}, {"name": "10818 오*후", "dir": "10818", "mb": 0.4, "g": "c108", "thumb": true}, {"name": "10826 전*우", "dir": "10826", "mb": 0.4, "g": "c108", "thumb": true}, {"name": "10827 조*한", "dir": "10827", "mb": 0.3, "g": "c108", "thumb": true}, {"name": "10833 홍*동", "dir": "10833", "mb": 0.5, "g": "c108", "thumb": true}, {"name": "10903 권*준", "dir": "10903", "mb": 0.5, "g": "c109", "thumb": true}, {"name": "10904 김*욱", "dir": "10904", "mb": 0.6, "g": "c109", "thumb": true}, {"name": "10905 김*윤", "dir": "10905", "mb": 0.5, "g": "c109", "thumb": true}, {"name": "10906 김*성", "dir": "10906", "mb": 3.6, "g": "c109", "thumb": true}, {"name": "10907 김*준", "dir": "10907", "mb": 0.5, "g": "c109", "thumb": true}, {"name": "10908 김*우", "dir": "10908", "mb": 0.2, "g": "c109", "thumb": true}, {"name": "10911 모*우", "dir": "10911", "mb": 0.7, "g": "c109", "thumb": true}, {"name": "10912 문*우", "dir": "10912", "mb": 0.3, "g": "c109", "thumb": true}, {"name": "10913 박*인", "dir": "10913", "mb": 0.6, "g": "c109", "thumb": true}, {"name": "10914 박*안", "dir": "10914", "mb": 0.3, "g": "c109", "thumb": true}, {"name": "10915 석*원", "dir": "10915", "mb": 2.1, "g": "c109", "thumb": true}, {"name": "10916 송*욱", "dir": "10916", "mb": 0.5, "g": "c109", "thumb": true}, {"name": "10917 안*민", "dir": "10917", "mb": 0.4, "g": "c109", "thumb": true}, {"name": "10921 이*진", "dir": "10921", "mb": 0.8, "g": "c109", "thumb": true}, {"name": "10923 이*민", "dir": "10923", "mb": 0.3, "g": "c109", "thumb": true}, {"name": "10924 임*진", "dir": "10924", "mb": 0.9, "g": "c109", "thumb": true}, {"name": "10926 조*현", "dir": "10926", "mb": 0.7, "g": "c109", "thumb": true}, {"name": "10927 조*우", "dir": "10927", "mb": 1.0, "g": "c109", "thumb": true}, {"name": "10929 홍*준", "dir": "10929", "mb": 0.1, "g": "c109", "thumb": true}, {"name": "10931 김*수", "dir": "10931", "mb": 0.3, "g": "c109", "thumb": true}, {"name": "10933 조*현", "dir": "10933", "mb": 0.6, "g": "c109", "thumb": true}, {"name": "11001 강*원", "dir": "11001", "mb": 0.2, "g": "c110", "thumb": true}, {"name": "11003 김*온", "dir": "11003", "mb": 0.4, "g": "c110", "thumb": true}, {"name": "11004 김*우", "dir": "11004", "mb": 0.4, "g": "c110", "thumb": true}, {"name": "11005 김*후", "dir": "11005", "mb": 0.6, "g": "c110", "thumb": true}, {"name": "11006 김*빈", "dir": "11006", "mb": 0.3, "g": "c110", "thumb": true}, {"name": "11009 김*이", "dir": "11009", "mb": 0.3, "g": "c110", "thumb": true}, {"name": "11011 모*율", "dir": "11011", "mb": 0.5, "g": "c110", "thumb": true}, {"name": "11012 문*민", "dir": "11012", "mb": 0.4, "g": "c110", "thumb": true}, {"name": "11013 밧*준", "dir": "11013", "mb": 1.2, "g": "c110", "thumb": true}, {"name": "11014 박*도", "dir": "11014", "mb": 0.7, "g": "c110", "thumb": true}, {"name": "11015 서*람", "dir": "11015", "mb": 0.7, "g": "c110", "thumb": true}, {"name": "11016 손*영", "dir": "11016", "mb": 0.4, "g": "c110", "thumb": true}, {"name": "11017 안*율", "dir": "11017", "mb": 0.3, "g": "c110", "thumb": true}, {"name": "11019 유*원", "dir": "11019", "mb": 0.1, "g": "c110", "thumb": true}, {"name": "11020 이*윤", "dir": "11020", "mb": 0.4, "g": "c110", "thumb": true}, {"name": "11021 이*현", "dir": "11021", "mb": 0.6, "g": "c110", "thumb": true}, {"name": "11022 이*율", "dir": "11022", "mb": 0.3, "g": "c110", "thumb": true}, {"name": "11023 이*엽", "dir": "11023", "mb": 0.5, "g": "c110", "thumb": true}, {"name": "11024 이*영", "dir": "11024", "mb": 0.3, "g": "c110", "thumb": true}, {"name": "11025 장*랑", "dir": "11025", "mb": 0.3, "g": "c110", "thumb": true}, {"name": "11027 조*윤", "dir": "11027", "mb": 0.2, "g": "c110", "thumb": true}, {"name": "11029 한*후", "dir": "11029", "mb": 0.2, "g": "c110", "thumb": true}, {"name": "11030 이*우", "dir": "11030", "mb": 0.6, "g": "c110", "thumb": true}];
+const grid = document.getElementById('grid');
+// 학번 5자리(학년 1 + 반 2 + 번호 2)에서 반을 뽑는다. 학번이 아닌 이름은 '기타'
+// 11/5 전학공: '전학공 선생님' + 학생 반별(c106~c110) 묶음(build.py 가 g 를 넣는다)
+const GROUP = { plc: '전학공 선생님', c106: '1학년 6반', c107: '1학년 7반', c108: '1학년 8반', c109: '1학년 9반', c110: '1학년 10반' };
+const BY = Object.fromEntries(ITEMS.map((i) => [i.dir, i.g]));
+const klass = (dir) => BY[dir] || 'c107';
+const label = (k) => k === '전체' ? k : GROUP[k] || k;
+for (const i of ITEMS) {
+  const a = document.createElement('a');
+  a.href = 'works/' + encodeURIComponent(i.dir) + '/';
+  const pic = document.createElement('div'); pic.className = 'pic';
+  if (i.thumb) {
+    const im = document.createElement('img');
+    im.src = 'works/' + encodeURIComponent(i.dir) + '/thumb.webp'; im.alt = i.name + ' 미리보기'; im.loading = 'lazy';
+    pic.append(im);
+  } else pic.innerHTML = '<span class="none">◎</span>';
+  const t = document.createElement('div'); t.className = 'nm'; t.textContent = i.name;
+  const s = document.createElement('small'); s.textContent = i.mb + 'MB'; t.append(s);
+  a.dataset.k = klass(i.dir);
+  a.append(pic, t); grid.append(a);
+}
+if (!ITEMS.length) grid.innerHTML = '<p class="empty">아직 올라온 작품이 없어요.</p>';
+const counts = {};
+for (const i of ITEMS) counts[klass(i.dir)] = (counts[klass(i.dir)] || 0) + 1;
+const keys = Object.keys(GROUP).filter((k) => counts[k]);
+const chips = document.getElementById('chips');
+if (!counts.plc) { const p = document.createElement('p'); p.className = 'empty'; p.textContent = '오늘 선생님들의 작품은 올라오는 대로 여기에 보여요(몇 분 걸려요). 지금은 학생 작품만 있어요.'; grid.before(p); }
+const show = (k) => {
+  if (k !== '전체' && !counts[k]) k = '전체';
+  for (const a of grid.querySelectorAll('a')) a.hidden = k !== '전체' && a.dataset.k !== k;
+  for (const b of chips.children) b.setAttribute('aria-pressed', String(b.dataset.k === k));
+  document.getElementById('count').textContent = (k === '전체' ? ITEMS.length : counts[k]) + '개';
+};
+for (const k of ['전체', ...keys]) {
+  const b = document.createElement('button'); b.type = 'button'; b.dataset.k = k;
+  b.textContent = label(k);
+  const n = document.createElement('small'); n.textContent = k === '전체' ? ITEMS.length : counts[k]; b.append(n);
+  b.onclick = () => { history.replaceState(null, '', k === '전체' ? location.pathname : '#' + k); show(k); };
+  chips.append(b);
+}
+show(decodeURIComponent(location.hash.slice(1)) || '전체');
+</script>
+</body>
+</html>
