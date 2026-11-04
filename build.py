@@ -65,13 +65,17 @@ def slug(name, used):
     return s
 
 
+ICON = ("<link rel=\"icon\" href=\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E"
+        "%3Crect width='64' height='64' rx='14' fill='%237DCBB5'/%3E%3Cpath d='M18 18h28l-8 14 8 14H18l8-14z' fill='white'/%3E%3C/svg%3E\">")
+
+
 def patch_viewer(text, name, url):
     """뷰어 위쪽: 왼쪽 '← 작품 목록', 가운데 작품 이름, 오른쪽 '📱 휴대폰으로' (누르면 이 작품 주소 QR)."""
     t = html.escape(name)
-    text = re.sub(r'<title>.*?</title>', f'<title>{t} · AR로 보기</title>', text, count=1, flags=re.S)
+    text = re.sub(r'<title>.*?</title>', f'<title>{t} · AR로 보기</title>' + ICON, text, count=1, flags=re.S)
     side = 'position:absolute;top:50%;transform:translateY(-50%);color:inherit;font:inherit;font-size:14px;font-weight:600;text-decoration:none;opacity:.9;padding:8px 6px;line-height:20px'
     back = f'<a href="../../" style="{side};left:14px">← 작품 목록</a>'
-    phone = (f'<button type="button" style="{side};right:14px;background:none;border:0;cursor:pointer;padding:0" '
+    phone = (f'<button type="button" style="{side};right:14px;background:none;border:0;cursor:pointer" '
              "onclick=\"document.getElementById('wb-qr').hidden=false\">📱 휴대폰으로</button>")
     box = ('<div id="wb-qr" hidden onclick="this.hidden=true" style="position:fixed;inset:0;z-index:10;background:rgba(0,0,0,.6);'
            'display:grid;place-items:center;cursor:pointer"><div style="background:#fff;color:#15151c;border-radius:16px;padding:18px;'
