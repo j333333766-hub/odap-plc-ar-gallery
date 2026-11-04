@@ -28,7 +28,7 @@ WORKS = ROOT / 'works'
 NEED = ('index.html', 'model.glb', 'model.usdz')
 REF_CLASSES = ('106', '107', '108', '109', '110')   # 참고로 보일 학생 반(학번 앞 세 자리) — 사용자 11/4: 학습 자료는 6~10반만
 from datetime import datetime
-PLC_SINCE = datetime(2026, 11, 5)   # 연수용 폴더에서 이 시각 이후에 올라온 파일만 전학공 작품(11/4 인하대 파일은 뺌)
+PLC_SINCE = datetime(2026, 11, 5, 15, 30)   # 연수용 폴더에서 이 시각 이후에 올라온 파일만 전학공 작품(11/4 인하대 파일은 뺌)
 
 
 def label(zip_path):
